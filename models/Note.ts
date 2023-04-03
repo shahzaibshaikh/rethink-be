@@ -28,9 +28,16 @@ const NoteSchema = new mongoose.Schema({
     default: false
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    user_info: {
+      first_name: String,
+      last_name: String,
+      email: String
+    }
   }
 });
 
