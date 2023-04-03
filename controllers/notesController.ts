@@ -8,7 +8,7 @@ import User from '../models/User';
 const getAllNotes = async (req: Request, res: Response) => {
   try {
     const notes = await Note.find({ is_deleted: false }).select(
-      '_id title created_at updated_at'
+      '_id title content created_at updated_at'
     );
 
     if (notes.length === 0)
@@ -45,7 +45,15 @@ const createNote = async (req: Request, res: Response) => {
 
     let note = new Note({
       title: title,
-      content: content
+      content: content,
+      user: {
+        user_id: storedUser._id,
+        user_info: {
+          first_name: storedUser.first_name,
+          last_name: storedUser.last_name,
+          email: storedUser.email
+        }
+      }
     });
     note = await note.save();
     res.status(200).json({ message: 'Note created successfully.', note: note });

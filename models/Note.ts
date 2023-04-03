@@ -34,9 +34,18 @@ const NoteSchema = new mongoose.Schema({
       required: true
     },
     user_info: {
-      first_name: String,
-      last_name: String,
-      email: String
+      first_name: {
+        type: String,
+        required: true
+      },
+      last_name: {
+        type: String,
+        required: true
+      },
+      email: {
+        type: String,
+        required: true
+      }
     }
   }
 });
