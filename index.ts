@@ -16,7 +16,7 @@ app.get('/', async (req: Request, res: Response) => {
   res.status(200).send('Welcome to Rethink.');
 });
 
-app.use('/notes', notesRouter);
+app.use('/api/notes', notesRouter);
 
 // Connection
 const PORT = process.env.PORT || 3000;

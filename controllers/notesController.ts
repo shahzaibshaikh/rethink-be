@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import NoteInterface from '../interfaces/Note';
 import Note from '../models/Note';
 
 // GET fetch all notes for a user
@@ -32,7 +33,19 @@ const getSpecificNote = async (req: Request, res: Response) => {
 };
 
 // POST create a new note
-const createNote = (req: Request, res: Response) => {};
+const createNote = async (req: Request, res: Response) => {
+  try {
+    const { title, content } = req.body as NoteInterface;
+    let note = new Note({
+      title: title,
+      content: content
+    });
+    note = await note.save();
+    res.status(200).json({ message: 'Note created successfully.', note: note });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 const updateNote = (req: Request, res: Response) => {};
 const deleteNote = (req: Request, res: Response) => {};
 
