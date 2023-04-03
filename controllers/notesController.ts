@@ -4,7 +4,9 @@ import Note from '../models/Note';
 // GET fetch all notes for a user
 const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await Note.find({ is_deleted: false });
+    const notes = await Note.find({ is_deleted: false }).select(
+      '_id title created_at updated_at'
+    );
 
     if (notes.length === 0)
       return res.status(404).json({ message: 'No notes found for this user.' });
