@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Test Routes
 app.get('/', async (req: Request, res: Response) => {
-  res.status(200).send('Welcome to first route.');
+  res.status(200).send('Welcome to Rethink.');
 });
 
 app.use('/notes', notesRouter);
