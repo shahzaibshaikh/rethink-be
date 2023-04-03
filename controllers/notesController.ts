@@ -7,9 +7,13 @@ import User from '../models/User';
 // GET fetch all notes for a user
 const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await Note.find({ is_deleted: false }).select(
-      '_id title content created_at updated_at'
-    );
+    const page = parseInt(req.query.page as string) || 1;
+    const perPage = parseInt(req.query.perPage as string) || 10;
+
+    const notes = await Note.find({ is_deleted: false })
+      .select('_id title content created_at updated_at')
+      .skip((page - 1) * perPage)
+      .limit(perPage);
 
     if (notes.length === 0)
       return res.status(404).json({ message: 'No notes found for this user.' });
