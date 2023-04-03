@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import notesRouter from './routes/notes';
+
 const app = express();
 dotenv.config();
 
@@ -13,6 +14,8 @@ app.use(express.json());
 app.get('/', async (req: Request, res: Response) => {
   res.status(200).send('Welcome to first route.');
 });
+
+app.use('/notes', notesRouter);
 
 // Connection
 const PORT = process.env.PORT || 3000;
