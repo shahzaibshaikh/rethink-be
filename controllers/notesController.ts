@@ -28,6 +28,9 @@ const getSpecificNote = async (req: Request, res: Response) => {
     if (!note)
       return res.status(404).json({ message: 'Note with given ID was not found.' });
 
+    if (note.is_deleted === true)
+      return res.status(404).json({ message: 'Note with given ID was not found.' });
+
     res.status(200).json({ note: note });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -63,7 +66,47 @@ const createNote = async (req: Request, res: Response) => {
 };
 
 // PUT update note
-const updateNote = async (req: Request, res: Response) => {};
-const deleteNote = (req: Request, res: Response) => {};
+const updateNote = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const { title, content, is_favorite } = req.body as NoteInterface;
+
+    let note = await Note.findById(id);
+
+    if (!note)
+      return res.status(404).json({ message: 'Note with given ID was not found.' });
+
+    if (title) note.title = title;
+    if (content) note.content = content;
+    if (is_favorite) note.is_favorite = is_favorite;
+    note.updated_at = new Date();
+
+    note = await note.save();
+
+    res.status(200).json({ message: 'Note updated successfully.', note: note });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const deleteNote = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    let note = await Note.findById(id).select('_id title is_deleted');
+
+    if (!note)
+      return res.status(404).json({ message: 'Note with given ID was not found.' });
+
+    if (note.is_deleted === true)
+      return res.status(400).json({ message: 'Note with given ID is already deleted.' });
+
+    note.is_deleted = true;
+    await note.save();
+
+    res.status(200).json({ message: 'Note deleted successfully.', note: note });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export { getAllNotes, getSpecificNote, createNote, updateNote, deleteNote };
