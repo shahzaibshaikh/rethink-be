@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import NoteInterface from '../interfaces/Note';
+import UserInterface from '../interfaces/User';
 import Note from '../models/Note';
+import User from '../models/User';
 
 // GET fetch all notes for a user
 const getAllNotes = async (req: Request, res: Response) => {
@@ -35,7 +37,12 @@ const getSpecificNote = async (req: Request, res: Response) => {
 // POST create a new note
 const createNote = async (req: Request, res: Response) => {
   try {
-    const { title, content } = req.body as NoteInterface;
+    const { title, content, user } = req.body as NoteInterface;
+
+    const storedUser = (await User.findById(user)) as UserInterface;
+    if (!storedUser)
+      return res.status(404).json({ message: 'User with given ID was not found.' });
+
     let note = new Note({
       title: title,
       content: content
