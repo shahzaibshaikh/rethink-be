@@ -61,7 +61,9 @@ const createNote = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
-const updateNote = (req: Request, res: Response) => {};
+
+// PUT update note
+const updateNote = async (req: Request, res: Response) => {};
 const deleteNote = (req: Request, res: Response) => {};
 
 export { getAllNotes, getSpecificNote, createNote, updateNote, deleteNote };
