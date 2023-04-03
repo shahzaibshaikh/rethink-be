@@ -15,6 +15,7 @@ const getAllNotes = async (req: Request, res: Response) => {
   }
 };
 
+// GET fetch a specific note
 const getSpecificNote = async (req: Request, res: Response) => {
   try {
     const note = await Note.findById(req.params.id);
@@ -28,6 +29,7 @@ const getSpecificNote = async (req: Request, res: Response) => {
   }
 };
 
+// POST create a new note
 const createNote = (req: Request, res: Response) => {};
 const updateNote = (req: Request, res: Response) => {};
 const deleteNote = (req: Request, res: Response) => {};
