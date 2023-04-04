@@ -24,7 +24,7 @@ function Auth(req: Request, res: Response, next: NextFunction) {
       });
     }
     const decode = jwt.verify(token, SECRET_KEY) as UserPayload;
-    const { user_id, first_name, last_name, email } = decode;
+    req.user.email = decode.email;
 
     next();
   } catch (error) {
