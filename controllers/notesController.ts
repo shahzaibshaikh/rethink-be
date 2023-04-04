@@ -10,7 +10,10 @@ const getAllNotes = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const perPage = parseInt(req.query.perPage as string) || 10;
 
-    const notes = await Note.find({ is_deleted: false })
+    if (!req.body.user)
+      return res.status(400).json({ message: 'Please provide user ID.' });
+
+    const notes = await Note.find({ 'user.user_id': req.body.user, is_deleted: false })
       .select('_id title content created_at updated_at')
       .skip((page - 1) * perPage)
       .limit(perPage);
