@@ -77,6 +77,11 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
 
     let note = await Note.findById(id);
 
+    if (note.user.user_id.toString() !== req.user.user_id)
+      return res
+        .status(401)
+        .json({ error: 'The note you are trying to edit does not belong to you.' });
+
     if (!note)
       return res.status(404).json({ error: 'Note with given ID was not found.' });
 
