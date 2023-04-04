@@ -50,20 +50,16 @@ const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
 // POST create a new note
 const createNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { title, content, user } = req.body as NoteInterface;
-
-    const storedUser = (await User.findById(user)) as UserInterface;
-    if (!storedUser)
-      return res.status(404).json({ error: 'User with given ID was not found.' });
+    const { title, content } = req.body as NoteInterface;
 
     let note = new Note({
       title: title,
       content: content,
       user: {
-        user_id: storedUser._id,
-        first_name: storedUser.first_name,
-        last_name: storedUser.last_name,
-        email: storedUser.email
+        user_id: req.user.user_id,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email
       }
     });
     note = await note.save();
