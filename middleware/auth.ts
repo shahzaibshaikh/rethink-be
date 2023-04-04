@@ -9,7 +9,16 @@ interface UserPayload extends JwtPayload {
   email: string;
 }
 
-function Auth(req: Request, res: Response, next: NextFunction) {
+interface AuthenticatedRequest extends Request {
+  user?: {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+}
+
+function Auth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authorization = req.headers.authorization;
   if (!authorization) {
     return res.status(401).json({
@@ -24,7 +33,7 @@ function Auth(req: Request, res: Response, next: NextFunction) {
       });
     }
     const decode = jwt.verify(token, SECRET_KEY) as UserPayload;
-    req.user.email = decode.email;
+    req.user = decode;
 
     next();
   } catch (error) {
