@@ -28,6 +28,7 @@ const registerUser = async (req: Request, res: Response) => {
     user = await user.save();
 
     const responseData = {
+      id: user._id,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email
@@ -68,6 +69,7 @@ const loginUser = async (req: Request, res: Response) => {
     }
 
     const responseData = {
+      id: user._id,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email

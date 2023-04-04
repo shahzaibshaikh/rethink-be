@@ -6,6 +6,7 @@ import {
   getSpecificNote,
   updateNote
 } from '../controllers/notesController';
+import auth from '../middleware/auth';
 
 const router = express.Router();
 
