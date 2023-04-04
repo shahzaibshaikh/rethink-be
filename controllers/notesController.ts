@@ -58,11 +58,9 @@ const createNote = async (req: Request, res: Response) => {
       content: content,
       user: {
         user_id: storedUser._id,
-        user_info: {
-          first_name: storedUser.first_name,
-          last_name: storedUser.last_name,
-          email: storedUser.email
-        }
+        first_name: storedUser.first_name,
+        last_name: storedUser.last_name,
+        email: storedUser.email
       }
     });
     note = await note.save();
