@@ -30,13 +30,13 @@ const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const note = await Note.findOne({ _id: req.params.id, is_deleted: false });
 
+    if (!note)
+      return res.status(404).json({ error: 'Note with given ID was not found.' });
+
     if (note.user.user_id.toString() !== req.user.user_id)
       return res
         .status(401)
         .json({ error: 'The note you requested does not belong to you.' });
-
-    if (!note)
-      return res.status(404).json({ error: 'Note with given ID was not found.' });
 
     if (note.is_deleted === true)
       return res.status(404).json({ error: 'Note with given ID was not found.' });
@@ -77,13 +77,13 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
 
     let note = await Note.findById(id);
 
+    if (!note)
+      return res.status(404).json({ error: 'Note with given ID was not found.' });
+
     if (note.user.user_id.toString() !== req.user.user_id)
       return res
         .status(401)
         .json({ error: 'The note you are trying to edit does not belong to you.' });
-
-    if (!note)
-      return res.status(404).json({ error: 'Note with given ID was not found.' });
 
     if (title) note.title = title;
     if (content) note.content = content;
@@ -97,7 +97,7 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-const deleteNote = async (req: Request, res: Response) => {
+const deleteNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id;
 
@@ -105,6 +105,11 @@ const deleteNote = async (req: Request, res: Response) => {
 
     if (!note)
       return res.status(404).json({ error: 'Note with given ID was not found.' });
+
+    if (note.user.user_id.toString() !== req.user.user_id)
+      return res
+        .status(401)
+        .json({ error: 'The note you are trying to delete does not belong to you.' });
 
     if (note.is_deleted === true)
       return res.status(400).json({ error: 'Note with given ID is already deleted.' });
