@@ -9,15 +9,6 @@ interface UserPayload extends JwtPayload {
   email: string;
 }
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-  };
-}
-
 function auth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authorization = req.headers.authorization;
   if (!authorization) {
