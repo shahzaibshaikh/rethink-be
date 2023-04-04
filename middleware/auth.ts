@@ -18,7 +18,7 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-function Auth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+function auth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authorization = req.headers.authorization;
   if (!authorization) {
     return res.status(401).json({
@@ -57,4 +57,4 @@ function Auth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   }
 }
 
-module.exports = Auth;
+export default auth;
