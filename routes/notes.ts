@@ -11,9 +11,9 @@ import auth from '../middleware/auth';
 const router = express.Router();
 
 router.get('/', auth, getAllNotes);
-router.get('/:id', getSpecificNote);
-router.post('/', createNote);
-router.put('/:id', updateNote);
-router.delete('/:id', deleteNote);
+router.get('/:id', auth, getSpecificNote);
+router.post('/', auth, createNote);
+router.put('/:id', auth, updateNote);
+router.delete('/:id', auth, deleteNote);
 
 export default router;
