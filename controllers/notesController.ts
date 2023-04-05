@@ -46,7 +46,7 @@ const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-// GET fetch a specific note from a particular folder
+// GET fetch all notes from a particular folder
 const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const folderId = req.params.folderId;
