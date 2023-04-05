@@ -35,7 +35,10 @@ const createFolder = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-const updateFolder = async (req: AuthenticatedRequest, res: Response) => {};
+const updateFolder = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+  } catch (error) {}
+};
 const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {};
 
 export { getAllFolders, createFolder, updateFolder, deleteFolder };

@@ -47,7 +47,7 @@ const NoteSchema = new mongoose.Schema({
     }
   },
   folder: {
-    folderId: {
+    folder_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Folder'
     },

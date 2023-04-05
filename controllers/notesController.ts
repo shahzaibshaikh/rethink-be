@@ -11,7 +11,7 @@ const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
     const perPage = parseInt(req.query.perPage as string) || 10;
 
     const notes = await Note.find({ 'user.user_id': req.user.user_id, is_deleted: false })
-      .select('_id title content created_at updated_at')
+      .select('_id title content created_at updated_at folder')
       .skip((page - 1) * perPage)
       .limit(perPage);
 
@@ -49,11 +49,11 @@ const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
 // GET fetch all notes from a particular folder
 const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const folderId = req.params.folderId;
+    const folder_id = req.params.folderId;
     const user_id = req.user.user_id;
 
     const notes = await Note.find({
-      folderId: folderId,
+      folder_id: folder_id,
       is_deleted: false,
       'user.user_id': user_id
     });
@@ -68,9 +68,9 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
 // POST create a new note
 const createNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { title, content, folderId } = req.body as NoteInterface;
+    const { title, content, folder_id } = req.body as NoteInterface;
 
-    const folder = await Folder.findById(folderId);
+    const folder = await Folder.findById(folder_id);
     console.log(folder.name);
 
     if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
@@ -79,7 +79,7 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
       title: title,
       content: content,
       folder: {
-        folderId: folderId,
+        folder_id: folder_id,
         name: folder.name
       },
       user: {
@@ -100,7 +100,7 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
 const updateNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id;
-    const { title, content, is_favorite, folderId } = req.body as NoteInterface;
+    const { title, content, is_favorite, folder_id } = req.body as NoteInterface;
 
     let note = await Note.findById(id);
 
@@ -118,12 +118,12 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
     if (title) note.title = title;
     if (content) note.content = content;
     if (is_favorite) note.is_favorite = is_favorite;
-    if (folderId) {
-      const folder = await Folder.findById(folderId);
+    if (folder_id) {
+      const folder = await Folder.findById(folder_id);
 
       if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
 
-      note.folder.folderId = folder._id;
+      note.folder.folder_id = folder._id;
       note.folder.name = folder.name;
     }
     note.updated_at = new Date();
