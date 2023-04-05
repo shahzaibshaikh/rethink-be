@@ -26,6 +26,10 @@ const createFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     if (!name) return res.status(400).json({ error: 'Name field is required.' });
 
+    const folderCheck = await Folder.find({ name: name, user: user_id });
+    if (folderCheck.length > 0)
+      return res.status(400).json({ error: 'Folder with this name already exists.' });
+
     let folder = new Folder({
       name: name,
       user: user_id
@@ -33,7 +37,7 @@ const createFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     folder = await folder.save();
 
-    res.status(200).json({ message: 'Folder created succesfully', folder: folder });
+    res.status(200).json({ message: 'Folder created succesfully.', folder: folder });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -42,10 +46,15 @@ const createFolder = async (req: AuthenticatedRequest, res: Response) => {
 // PUT update a folder
 const updateFolder = async (req: AuthenticatedRequest, res: Response) => {
   try {
+    const user_id = req.user.user_id;
     const folder_id = req.params.id;
     const { name } = req.body as FolderInterface;
 
     if (!name) return res.status(400).json({ error: 'Name field is required.' });
+
+    const folderCheck = await Folder.find({ name: name, user: user_id });
+    if (folderCheck.length > 0)
+      return res.status(400).json({ error: 'Folder with this name already exists.' });
 
     let folder = await Folder.findById(folder_id);
 
