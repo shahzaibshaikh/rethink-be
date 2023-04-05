@@ -53,7 +53,7 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
     const user_id = req.user.user_id;
 
     const notes = await Note.find({
-      folder_id: folder_id,
+      'folder.folder_id': folder_id,
       is_deleted: false,
       'user.user_id': user_id
     });
