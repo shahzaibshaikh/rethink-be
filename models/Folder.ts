@@ -9,8 +9,13 @@ const FolderSchema = new Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false
     }
   },
+
   {
     timestamps: true
   }
