@@ -41,7 +41,8 @@ const registerUser = async (req: Request, res: Response) => {
         last_name: user.last_name,
         email: user.email
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: '12h' }
     );
 
     res
