@@ -154,7 +154,7 @@ const deleteNote = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(400).json({ error: 'Note with given ID is already deleted.' });
 
     note.is_deleted = true;
-    await note.save();
+    note = await note.save();
 
     res.status(200).json({ message: 'Note deleted successfully.', note: note });
   } catch (error) {

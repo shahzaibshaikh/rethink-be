@@ -49,7 +49,7 @@ const updateFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     let folder = await Folder.findById(folder_id);
 
-    if (!folder)
+    if (!folder || folder.is_deleted)
       return res.status(404).json({ error: 'Folder with given ID does not exist.' });
 
     folder.name = name;
@@ -64,6 +64,27 @@ const updateFolder = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 // DELETE delete a folder
-const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {};
+const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const folder_id = req.params.id;
+    let folder = await Folder.findById(folder_id);
+    if (!folder)
+      return res.status(404).json({ error: 'Folder with given ID does not exist.' });
+
+    if (folder.user.toString() !== req.user.user_id)
+      return res
+        .status(401)
+        .json({ error: 'The folder you are trying to delete does not belong to you.' });
+
+    if (folder.is_deleted === true)
+      return res.status(400).json({ error: 'Folder with given ID is already deleted.' });
+
+    folder.is_deleted = true;
+    folder = await folder.save();
+    res.status(200).json({ message: 'Folder deleted successfully.', folder: folder });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export { getAllFolders, createFolder, updateFolder, deleteFolder };
