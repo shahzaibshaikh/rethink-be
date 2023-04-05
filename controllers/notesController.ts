@@ -71,13 +71,14 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
     const { title, content, folderId } = req.body as NoteInterface;
 
     const folder = await Folder.findById(folderId);
+    console.log(folder.name);
 
     if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
 
     let note = new Note({
       title: title,
       content: content,
-      folderId: {
+      folder: {
         folderId: folderId,
         name: folder.name
       },
