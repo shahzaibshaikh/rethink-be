@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import NoteInterface from '../interfaces/Note';
-import UserInterface from '../interfaces/User';
 import { AuthenticatedRequest } from '../middleware/auth';
+import Folder from '../models/Folder';
 import Note from '../models/Note';
-import User from '../models/User';
 
 // GET fetch all notes for a user
 const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
@@ -47,14 +46,41 @@ const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+// GET fetch a specific note from a particular folder
+const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const folderId = req.params.folderId;
+    const user_id = req.user.user_id;
+
+    const notes = await Note.find({
+      folderId: folderId,
+      is_deleted: false,
+      'user.user_id': user_id
+    });
+
+    if (!notes) return res.status(404).json({ error: 'This folder is empty.' });
+    res.status(200).json({ notes: notes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // POST create a new note
 const createNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { title, content } = req.body as NoteInterface;
+    const { title, content, folderId } = req.body as NoteInterface;
+
+    const folder = await Folder.findById(folderId);
+
+    if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
 
     let note = new Note({
       title: title,
       content: content,
+      folderId: {
+        folderId: folderId,
+        name: folder.name
+      },
       user: {
         user_id: req.user.user_id,
         first_name: req.user.first_name,
@@ -73,9 +99,12 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
 const updateNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id;
-    const { title, content, is_favorite } = req.body as NoteInterface;
+    const { title, content, is_favorite, folderId } = req.body as NoteInterface;
 
     let note = await Note.findById(id);
+
+    if (note.is_deleted === true)
+      return res.status(400).json({ error: 'Note does not exist anymore.' });
 
     if (!note)
       return res.status(404).json({ error: 'Note with given ID was not found.' });
@@ -88,6 +117,14 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
     if (title) note.title = title;
     if (content) note.content = content;
     if (is_favorite) note.is_favorite = is_favorite;
+    if (folderId) {
+      const folder = await Folder.findById(folderId);
+
+      if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
+
+      note.folder.folderId = folder._id;
+      note.folder.name = folder.name;
+    }
     note.updated_at = new Date();
 
     note = await note.save();
@@ -97,6 +134,8 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// DELETE delete a note
 const deleteNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id;
@@ -123,4 +162,11 @@ const deleteNote = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { getAllNotes, getSpecificNote, createNote, updateNote, deleteNote };
+export {
+  getAllNotes,
+  getSpecificNote,
+  getSpecificFolderNote,
+  createNote,
+  updateNote,
+  deleteNote
+};

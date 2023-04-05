@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnect from './config/dbConnect';
-import serverless from 'serverless-http';
 import notesRouter from './routes/notes';
+import folderRouter from './routes/folders';
 import userRouter from './routes/users';
 
 const app = express();
@@ -20,6 +20,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 app.use('/api/notes', notesRouter);
 app.use('/api/users', userRouter);
+app.use('/api/folders', folderRouter);
 
 // Connection
 dbConnect();

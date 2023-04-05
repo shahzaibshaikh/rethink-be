@@ -45,6 +45,15 @@ const NoteSchema = new mongoose.Schema({
       type: String,
       required: true
     }
+  },
+  folder: {
+    folderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Folder'
+    },
+    name: {
+      type: String
+    }
   }
 });
 

@@ -6,10 +6,6 @@ export default interface NoteInterface {
   updated_at?: string;
   is_deleted?: boolean;
   is_favorite?: boolean;
-  user?: {
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-  };
+  folderId?: string;
+  user?: string;
 }
