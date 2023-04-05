@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import dbConnect from './config/dbConnect';
+import serverless from 'serverless-http';
 import notesRouter from './routes/notes';
 import userRouter from './routes/users';
 
@@ -21,8 +22,6 @@ app.use('/api/notes', notesRouter);
 app.use('/api/users', userRouter);
 
 // Connection
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log('App running in port: ' + PORT);
-  dbConnect();
-});
+dbConnect();
+
+export default serverless(app);
