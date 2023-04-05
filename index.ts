@@ -22,8 +22,8 @@ app.use('/api/notes', notesRouter);
 app.use('/api/users', userRouter);
 
 // Connection
+dbConnect();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('App running in port: ' + PORT);
-  dbConnect();
 });
