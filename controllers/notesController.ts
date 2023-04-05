@@ -71,7 +71,6 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
     const { title, content, folder_id } = req.body as NoteInterface;
 
     const folder = await Folder.findById(folder_id);
-    console.log(folder.name);
 
     if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
 
