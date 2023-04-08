@@ -11,7 +11,7 @@ const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
     const perPage = parseInt(req.query.perPage as string) || 10;
 
     const notes = await Note.find({ 'user.user_id': req.user.user_id, is_deleted: false })
-      .select('_id title content created_at updated_at folder')
+      .select('_id title content created_at updated_at folder is_favorite')
       .skip((page - 1) * perPage)
       .limit(perPage);
 
