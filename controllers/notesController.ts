@@ -8,7 +8,7 @@ import Note from '../models/Note';
 const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const perPage = parseInt(req.query.perPage as string) || 10;
+    const perPage = parseInt(req.query.perPage as string) || 30;
 
     const notes = await Note.find({ 'user.user_id': req.user.user_id, is_deleted: false })
       .select('_id title content created_at updated_at folder is_favorite')
@@ -52,11 +52,17 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
     const folder_id = req.params.folderId;
     const user_id = req.user.user_id;
 
+    const page = parseInt(req.query.page as string) || 1;
+    const perPage = parseInt(req.query.perPage as string) || 30;
+
     const notes = await Note.find({
       'folder.folder_id': folder_id,
       is_deleted: false,
       'user.user_id': user_id
-    });
+    })
+      .select('_id title content created_at updated_at folder is_favorite')
+      .skip((page - 1) * perPage)
+      .limit(perPage);
 
     if (!notes) return res.status(404).json({ error: 'This folder is empty.' });
     res.status(200).json({ notes: notes });
