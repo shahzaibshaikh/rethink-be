@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import NoteInterface from '../interfaces/Note';
 import { AuthenticatedRequest } from '../middleware/auth';
 import Folder from '../models/Folder';
@@ -13,7 +14,8 @@ const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
     const notes = await Note.find({ 'user.user_id': req.user.user_id, is_deleted: false })
       .select('_id title content created_at updated_at folder is_favorite')
       .skip((page - 1) * perPage)
-      .limit(perPage);
+      .limit(perPage)
+      .sort({ updated_at: -1 });
 
     if (notes.length === 0)
       return res.status(404).json({ error: 'No notes found for this user.' });
@@ -62,7 +64,8 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
     })
       .select('_id title content created_at updated_at folder is_favorite')
       .skip((page - 1) * perPage)
-      .limit(perPage);
+      .limit(perPage)
+      .sort({ updated_at: -1 });
 
     if (!notes) return res.status(404).json({ error: 'This folder is empty.' });
     res.status(200).json({ notes: notes });
@@ -76,17 +79,16 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { title, content, folder_id } = req.body as NoteInterface;
 
-    const folder = await Folder.findById(folder_id);
-
-    if (!folder) return res.status(404).json({ error: 'Folder does not exist.' });
+    let folder;
+    if (folder_id) {
+      folder = await Folder.findById(folder_id);
+      if (!folder)
+        return res.status(404).json({ error: 'Folder with this ID does not exist.' });
+    }
 
     let note = new Note({
       title: title,
       content: content,
-      folder: {
-        folder_id: folder_id,
-        name: folder.name
-      },
       user: {
         user_id: req.user.user_id,
         first_name: req.user.first_name,
@@ -94,6 +96,14 @@ const createNote = async (req: AuthenticatedRequest, res: Response) => {
         email: req.user.email
       }
     });
+
+    if (folder) {
+      note.folder = {
+        folder_id: new mongoose.Types.ObjectId(folder_id),
+        name: folder.name
+      };
+    }
+
     note = await note.save();
     res.status(200).json({ message: 'Note created successfully.', note: note });
   } catch (error) {
