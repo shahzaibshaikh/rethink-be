@@ -156,7 +156,8 @@ const deleteNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const id = req.params.id;
 
-    let note = await Note.findById(id).select('_id title is_deleted');
+    let note = await Note.findById(id).select('_id title is_deleted user');
+    console.log(note);
 
     if (!note)
       return res.status(404).json({ error: 'Note with given ID was not found.' });
