@@ -18,7 +18,7 @@ const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
       .sort({ updated_at: -1 });
 
     if (notes.length === 0)
-      return res.status(404).json({ error: 'No notes found for this user.' });
+      return res.status(200).json({ error: 'No notes found for this user.' });
 
     res.status(200).json({ notes: notes });
   } catch (error) {
@@ -67,7 +67,7 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
       .limit(perPage)
       .sort({ updated_at: -1 });
 
-    if (!notes) return res.status(404).json({ error: 'This folder is empty.' });
+    if (!notes) return res.status(200).json({ error: 'This folder is empty.' });
     res.status(200).json({ notes: notes });
   } catch (error) {
     res.status(500).json({ error: error.message });

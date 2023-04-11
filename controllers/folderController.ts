@@ -10,7 +10,7 @@ const getAllFolders = async (req: AuthenticatedRequest, res: Response) => {
     const folders = await Folder.find({ user: user_id, is_deleted: false });
 
     if (folders.length === 0)
-      return res.status(404).json({ error: 'No folders found for this user.' });
+      return res.status(200).json({ error: 'No folders found for this user.' });
 
     res.status(200).json({ folders: folders });
   } catch (error) {
