@@ -95,11 +95,11 @@ const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     folder.is_deleted = true;
     folder = await folder.save();
-    const notesToUpdate = Note.find({
-      is_deleted: false,
-      'folder.folder_id': folder._id
-    });
-    console.log(notesToUpdate);
+    Note.updateMany(
+      { 'folder.folder_id': folder._id, is_deleted: false },
+      { $unset: { folder: 1 } },
+      { multi: true }
+    );
 
     res.status(200).json({ message: 'Folder deleted successfully.', folder: folder });
   } catch (error) {
