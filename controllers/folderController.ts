@@ -96,9 +96,8 @@ const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {
     folder.is_deleted = true;
     folder = await folder.save();
     Note.updateMany(
-      { 'folder.folder_id': folder._id, is_deleted: false },
-      { $unset: { folder: 1 } },
-      { multi: true }
+      { 'folder.folder_id': 'your_folder_id_string' },
+      { $unset: { folder: 1 } }
     );
 
     res.status(200).json({ message: 'Folder deleted successfully.', folder: folder });
