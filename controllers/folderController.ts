@@ -26,7 +26,11 @@ const createFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     if (!name) return res.status(400).json({ error: 'Name field is required.' });
 
-    const folderCheck = await Folder.find({ name: name, user: user_id });
+    const folderCheck = await Folder.find({
+      name: name,
+      user: user_id,
+      is_deleted: false
+    });
     if (folderCheck.length > 0)
       return res.status(400).json({ error: 'Folder with this name already exists.' });
 
