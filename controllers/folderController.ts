@@ -2,6 +2,7 @@ import { Response } from 'express';
 import FolderInterface from '../interfaces/Folder';
 import { AuthenticatedRequest } from '../middleware/auth';
 import Folder from '../models/Folder';
+import Note from '../models/Note';
 
 // POST fetch all folders for a user
 const getAllFolders = async (req: AuthenticatedRequest, res: Response) => {
@@ -94,6 +95,12 @@ const deleteFolder = async (req: AuthenticatedRequest, res: Response) => {
 
     folder.is_deleted = true;
     folder = await folder.save();
+    const notesToUpdate = Note.find({
+      is_deleted: false,
+      'folder.folder_id': folder._id
+    });
+    console.log(notesToUpdate);
+
     res.status(200).json({ message: 'Folder deleted successfully.', folder: folder });
   } catch (error) {
     res.status(500).json({ error: error.message });
