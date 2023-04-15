@@ -132,7 +132,7 @@ const updateNote = async (req: AuthenticatedRequest, res: Response) => {
 
     if (title) note.title = title;
     if (content) note.content = content;
-    if (is_favorite) note.is_favorite = is_favorite;
+    if (is_favorite !== (null || undefined)) note.is_favorite = is_favorite;
     if (folder_id) {
       const folder = await Folder.findById(folder_id);
 
