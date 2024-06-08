@@ -26,6 +26,32 @@ const getAllNotes = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+// GET search notes by title
+const searchNotesByTitle = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user_id = req.user.user_id;
+    const searchQuery = req.query.searchQuery as string || '';
+
+    const page = parseInt(req.query.page as string) || 1;
+    const perPage = parseInt(req.query.perPage as string) || 30;
+
+    const notes = await Note.find({
+      is_deleted: false,
+      'user.user_id': user_id,
+      title: { $regex: searchQuery, $options: 'i' } // Case-insensitive search
+    })
+      .select('_id title content created_at updated_at folder is_favorite')
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ updated_at: -1 });
+
+    if (!notes.length) return res.status(200).json({ error: 'No notes found.' });
+    res.status(200).json({ notes: notes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // GET fetch a specific note
 const getSpecificNote = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -67,12 +93,13 @@ const getSpecificFolderNote = async (req: AuthenticatedRequest, res: Response) =
       .limit(perPage)
       .sort({ updated_at: -1 });
 
-    if (!notes) return res.status(200).json({ error: 'This folder is empty.' });
+    if (!notes.length) return res.status(200).json({ error: 'This folder is empty.' });
     res.status(200).json({ notes: notes });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // POST create a new note
 const createNote = async (req: AuthenticatedRequest, res: Response) => {
@@ -183,6 +210,7 @@ export {
   getAllNotes,
   getSpecificNote,
   getSpecificFolderNote,
+  searchNotesByTitle,
   createNote,
   updateNote,
   deleteNote

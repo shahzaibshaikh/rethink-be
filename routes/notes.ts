@@ -5,13 +5,15 @@ import {
   getAllNotes,
   getSpecificNote,
   getSpecificFolderNote,
-  updateNote
+  updateNote,
+  searchNotesByTitle
 } from '../controllers/notesController';
 import auth from '../middleware/auth';
 
 const router = express.Router();
 
 router.get('/', auth, getAllNotes);
+router.get('/search/', auth, searchNotesByTitle);
 router.get('/:id', auth, getSpecificNote);
 router.get('/folder/:folderId', auth, getSpecificFolderNote);
 router.post('/', auth, createNote);
